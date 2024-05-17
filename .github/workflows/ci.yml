@@ -65,6 +65,3 @@ jobs:
           expected-header: content-type:c_json
           expected-body: key:r_*al*,one:c_two,three:ne_
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
