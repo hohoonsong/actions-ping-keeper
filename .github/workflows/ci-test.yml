@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dist/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'dist/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test-action:
+    name: GitHub Actions Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          url: http://echo.jsontest.com/key/value/one/two
+          max-attempts: 3
+          retry-delay: 3
+          follow-redirect: true
+          expected-status: 200,301
+          expected-header: content-type:c_json
+          expected-body: key:r_*al*,one:c_two,three:ne_

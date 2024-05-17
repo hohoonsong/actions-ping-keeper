@@ -13,9 +13,13 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'dist/**'
   push:
     branches:
       - main
+    paths:
+      - 'dist/**'
 
 permissions:
   contents: read
