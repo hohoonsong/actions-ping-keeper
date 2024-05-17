@@ -57,7 +57,13 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
+          url: http://echo.jsontest.com/key/value/one/two
+          max-attempts: 3
+          retry-delay: 3
+          follow-redirect: true
+          expected-status: 200,301
+          expected-header: content-type:c_json
+          expected-body: key:r_*al*,one:c_two,three:ne_
 
       - name: Print Output
         id: output

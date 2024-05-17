@@ -1,96 +1,157 @@
 /**
  * Unit tests for the action's main functionality, src/main.js
  */
-const core = require('@actions/core')
 const main = require('../src/main')
+const core = require('@actions/core')
 
 // Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug').mockImplementation()
-const getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-const setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-const setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+const getInputMock = jest.spyOn(core, 'getInput')
+const getBooleanInputMock = jest.spyOn(core, 'getBooleanInput')
+const setOutputSpy = jest.spyOn(core, 'setOutput')
+const setFailedSpy = jest.spyOn(core, 'setFailed')
 
-// Mock the action's main function
-const runMock = jest.spyOn(main, 'run')
-
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
-
-describe('action', () => {
+describe('ping-keeper', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('sets the time output', async () => {
-    // Set the action's inputs as return values from core.getInput()
+  it('should assert status-code, header, multiple bodies', () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'url':
+          return 'http://echo.jsontest.com/key/value/one/two'
+        case 'max-attempts':
+          return '3'
+        case 'retry-delay':
+          return '3'
+        case 'follow-redirect':
+          return 'true'
+        case 'expected-status':
+          return '200,301'
+        case 'expected-header':
+          return 'content-type:c_json'
+        case 'expected-body':
+          return 'key:r_*al*,one:c_two,three:ne_'
         default:
           return ''
       }
     })
+    getBooleanInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'follow-redirect':
+          return true
+        default:
+          return true
+      }
+    })
 
-    await main.run()
-    expect(runMock).toHaveReturned()
-
-    // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    main.run()
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-status', true)
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-header', true)
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-body', true)
+    expect(setFailedSpy).not.toHaveBeenCalled()
   })
 
-  it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
+  it('should assert status-code, multiple header, multiple bodies', () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
+        case 'url':
+          return 'http://echo.jsontest.com/key/value/one/two'
+        case 'max-attempts':
+          return '3'
+        case 'retry-delay':
+          return '3'
+        case 'follow-redirect':
+          return 'true'
+        case 'expected-status':
+          return '200,301'
+        case 'expected-header':
+          return 'content-type:c_json,server:r_Google*'
+        case 'expected-body':
+          return 'key:r_*al*,one:c_two,three:ne_'
         default:
           return ''
       }
     })
+    getBooleanInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'follow-redirect':
+          return true
+        default:
+          return true
+      }
+    })
 
-    await main.run()
-    expect(runMock).toHaveReturned()
-
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
+    main.run()
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-status', true)
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-header', true)
+    expect(setOutputSpy).toHaveBeenCalledWith('assert-body', true)
+    expect(setFailedSpy).not.toHaveBeenCalled()
   })
 
-  it('fails if no input is provided', async () => {
-    // Set the action's inputs as return values from core.getInput()
+  it('should fail because expected status not match', () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'milliseconds':
-          throw new Error('Input required and not supplied: milliseconds')
+        case 'url':
+          return 'http://echo.jsontest.com/key/value/one/two'
+        case 'max-attempts':
+          return '3'
+        case 'retry-delay':
+          return '3'
+        case 'follow-redirect':
+          return 'true'
+        // cause failure
+        case 'expected-status':
+          return '404,502'
         default:
           return ''
       }
     })
+    getBooleanInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'follow-redirect':
+          return true
+        default:
+          return true
+      }
+    })
 
-    await main.run()
-    expect(runMock).toHaveReturned()
+    main.run()
+    expect(setFailedSpy).toHaveBeenCalled()
+  })
 
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'Input required and not supplied: milliseconds'
-    )
+  it('should fail because expected bodies assertion', () => {
+    getInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'url':
+          return 'http://echo.jsontest.com/key/value/one/two'
+        case 'max-attempts':
+          return '3'
+        case 'retry-delay':
+          return '3'
+        case 'follow-redirect':
+          return 'true'
+        case 'expected-status':
+          return '200,301'
+        // cause failure
+        case 'expected-header':
+          return 'content-type:nc_json'
+        case 'expected-body':
+          return 'key:r_*al*,one:c_two,three:ne_'
+        default:
+          return ''
+      }
+    })
+    getBooleanInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'follow-redirect':
+          return true
+        default:
+          return true
+      }
+    })
+
+    main.run()
+    expect(setFailedSpy).toHaveBeenCalled()
   })
 })

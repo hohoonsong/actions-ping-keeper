@@ -1,18 +1,72 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Ping Keeper'
+description: 'After sending the http request, verify the response header and value. fails when assertion not match'
+author: 'hohoonsong@gmail.com'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  url:
+    description: Target URL.
     required: true
-    default: '1000'
-
+  max-attempts:
+    description: Maximum number of times an operation or request should be retried before considering it failed.
+    required: false
+    default: "1"
+  retry-delay:
+    description: Waiting period between consecutive retry attempts after a failure or error.
+    required: false
+    default: "3"
+  follow-redirect:
+    description: Determines whether to automatically follow HTTP redirects that a server might send as responses.
+    required: false
+    default: "false"
+  headers:
+    description: |
+      HTTP headers you want to attach to request.
+      Format: `Name=Value`
+    required: false
+    default: ""
+  basic-auth:
+    description: |
+      Basic auth login password pair.
+      Format: `login:password`
+    required: false
+    default: ""
+  expected-status:
+    description: |
+      Expected HTTP status code to receive as a response.
+      Format: `200,301,302`
+    required: false
+    default: "200"
+  expected-header:
+    description: |
+      Expected HTTP headers to receive as a response.
+      Format: `key1:c_value1,key2:e_,key3:r_value3`
+      Value prefix: c_ - contains, e_ - exist, r_ - regex match, nc_ - not contains, ne_ - not exist, nr_ not regex match.
+    required: false
+    default: ""
+  expected-body:
+    description: |
+      Expected HTTP body to receive as a response. it looks for it according to json syntax.
+      Format: `key1:c_value1,key2:e_,key3:r_value3`
+      Value prefix: c_ - contains, e_ - exist, r_ - regex match, nc_ - not contains, ne_ - not exist, nr_ not regex match.
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  assert-status:
+    description: Received the expected http status code
+  assert-header:
+    description: Received the expected http header
+  assert-body:
+    description: Received the expected http body
+  actual-status:
+    description: Actual status code received as response
+  actual-header:
+    description: Actual header received as response
+  actual-data:
+    description: Actual data received as response
+
+branding:
+  icon: activity
+  color: green
 
 runs:
   using: node20
