@@ -1,7 +1,7 @@
 const core = require('@actions/core')
 const { wait } = require('./wait')
 const request = require('sync-request-curl')
-const anymatch = require('anymatch');
+const anymatch = require('anymatch')
 
 function run() {
   try {

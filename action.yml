@@ -1,5 +1,7 @@
 name: 'Ping Keeper'
-description: 'After sending the http request, verify the response header and value. fails when assertion not match'
+description:
+  'After sending the http request, verify the response header and value. fails
+  when assertion not match'
 author: 'hohoonsong@gmail.com'
 
 # Define your inputs here.
@@ -8,42 +10,48 @@ inputs:
     description: Target URL.
     required: true
   max-attempts:
-    description: Maximum number of times an operation or request should be retried before considering it failed.
+    description:
+      Maximum number of times an operation or request should be retried before
+      considering it failed.
     required: false
-    default: "1"
+    default: '1'
   retry-delay:
-    description: Waiting period between consecutive retry attempts after a failure or error.
+    description:
+      Waiting period between consecutive retry attempts after a failure or
+      error.
     required: false
-    default: "3"
+    default: '3'
   follow-redirect:
-    description: Determines whether to automatically follow HTTP redirects that a server might send as responses.
+    description:
+      Determines whether to automatically follow HTTP redirects that a server
+      might send as responses.
     required: false
-    default: "false"
+    default: 'false'
   headers:
     description: |
       HTTP headers you want to attach to request.
       Format: `Name=Value`
     required: false
-    default: ""
+    default: ''
   basic-auth:
     description: |
       Basic auth login password pair.
       Format: `login:password`
     required: false
-    default: ""
+    default: ''
   expected-status:
     description: |
       Expected HTTP status code to receive as a response.
       Format: `200,301,302`
     required: false
-    default: "200"
+    default: '200'
   expected-header:
     description: |
       Expected HTTP headers to receive as a response.
       Format: `key1:c_value1,key2:e_,key3:r_value3`
       Value prefix: c_ - contains, e_ - exist, r_ - regex match, nc_ - not contains, ne_ - not exist, nr_ not regex match.
     required: false
-    default: ""
+    default: ''
   expected-body:
     description: |
       Expected HTTP body to receive as a response. it looks for it according to json syntax.
