@@ -66,7 +66,7 @@ jobs:
           cache: npm
 
       - name: Build
-        run: npm run all
+        run: npm run bundle
 
       - name: Create commit
         uses: stefanzweifel/git-auto-commit-action@v5
