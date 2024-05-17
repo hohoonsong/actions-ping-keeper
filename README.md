@@ -45,9 +45,6 @@ indicators.
 
 ## Example usage
 
-Check out [`EXAMPLE_TEMPLATE.md`](./EXAMPLE_TEMPLATE.md) and
-[`EXAMPLE_OUTPUT.md`](./EXAMPLE_OUTPUT.md) for more examples and their outputs.
-
 Workflow:
 
 ```yml
