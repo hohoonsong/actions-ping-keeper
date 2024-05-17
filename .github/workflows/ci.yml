@@ -1,6 +1,7 @@
 name: Continuous Integration
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
@@ -57,6 +58,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: Setup Node.js
         id: setup-node
