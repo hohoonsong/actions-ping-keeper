@@ -64,4 +64,3 @@ jobs:
           expected-status: 200,301
           expected-header: content-type:c_json
           expected-body: key:r_*al*,one:c_two,three:ne_
-
