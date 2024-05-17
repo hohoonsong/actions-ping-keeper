@@ -65,6 +65,10 @@ jobs:
           node-version-file: .node-version
           cache: npm
 
+      - name: Install Dependencies
+        id: npm-ci
+        run: npm ci
+
       - name: Build
         run: npm run bundle
 
